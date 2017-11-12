@@ -2,7 +2,7 @@
 
     package DBIx::MysqlCoroAnyEvent;
 
-    our $VERSION = "0.01";
+    our $VERSION = "0.02";
     use base 'DBI';
 
 =head1 NAME
@@ -18,6 +18,7 @@ DBIx::MysqlCoroAnyEvent - DBD::mysql + Coro + AnyEvent
 
 }
 {
+
     package DBIx::MysqlCoroAnyEvent::db;
     use DBD::mysql;
     use DBI;
@@ -39,9 +40,17 @@ DBIx::MysqlCoroAnyEvent - DBD::mysql + Coro + AnyEvent
         my $rows = $sth->rows;
         ($rows == 0) ? "0E0" : $rows;
     }
+
+    BEGIN {
+        no warnings 'once';
+        *selectrow_array    = \&DBD::_::db::selectrow_array;
+        *selectrow_arrayref = \&DBD::_::db::selectrow_arrayref;
+        *selectall_arrayref = \&DBD::_::db::selectall_arrayref;
+    }
 }
 
 {
+
     package DBIx::MysqlCoroAnyEvent::st;
     use Coro;
     use AnyEvent;
